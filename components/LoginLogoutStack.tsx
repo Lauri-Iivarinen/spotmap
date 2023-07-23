@@ -35,7 +35,8 @@ export default function LoginLogoutStack() {
             setFetching(false)
         }
         else {
-            fetchUserDataAndLogin(userToken!)
+            setFetching(false)
+            //fetchUserDataAndLogin(userToken!)
         }
     }
 
