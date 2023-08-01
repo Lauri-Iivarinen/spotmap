@@ -7,7 +7,7 @@ type LoginProps = {
     fetchUserData: (token: string) => void;
 }
 
-//Need to add module for creating new user -> passwords needs to use bcrypt
+//Page for authenticating user, either log in with credentials or create new account
 export default function Login(props: LoginProps) {
 
     const [userName, setUsername] = useState<string>('')
