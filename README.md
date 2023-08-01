@@ -5,3 +5,5 @@ find the best parkour spots near you,
 
 - trusted/logged in users can add spots to map
 - find spots near user
+- potential comment section for each spot
+  
