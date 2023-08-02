@@ -11,9 +11,11 @@ export default function LoginLogoutStack() {
     const [loggedIn, setLoggedIn] = useState(false)
     const [fetching, setFetching] = useState(true) //For custom display to show everything only after things are loaded/fetched
     const [userData, setUserData] = useState<User>()
+    const [token, setToken] = useState<string>('')
 
     //Fetch userdata with token if it exists, at the same time checks if login session has expired
     const fetchUserDataAndLogin = async (token: string) => {
+        setToken(token)
         try {
             const response = await fetch("https://spotmapback-4682c78c99fa.herokuapp.com/api/user", {
             headers: {Authorization: `Bearer ${token}`}
@@ -35,8 +37,8 @@ export default function LoginLogoutStack() {
             setFetching(false)
         }
         else {
-            setFetching(false)
-            //fetchUserDataAndLogin(userToken!)
+            //setFetching(false)
+            fetchUserDataAndLogin(userToken!)
         }
     }
 
@@ -54,7 +56,7 @@ export default function LoginLogoutStack() {
     } else {
         return (
             <View style={{flex: 1, justifyContent: "center", alignItems: "center", flexDirection: 'row'}}>
-                {loggedIn ? <Homepage user={userData!}></Homepage> : <Login fetchUserData={fetchUserDataAndLogin}></Login>}
+                {loggedIn ? <Homepage user={userData!} token={token}></Homepage> : <Login fetchUserData={fetchUserDataAndLogin}></Login>}
             </View>
         )
     }

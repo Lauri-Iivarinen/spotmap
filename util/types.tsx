@@ -23,3 +23,19 @@ export interface Spot{
 export interface SpotIdList{
     id: number;
 }
+
+interface Coords{
+    accuracy?: number;
+    altitude?: number;
+    altitudeAccuracy?: number;
+    heading?: number;
+    latitude?: number;
+    longitude?: number;
+    speed?: number;
+}
+
+export interface LocationType{
+    coords?: Coords;
+    timestamp?: number;
+}
+
