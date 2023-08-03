@@ -1,9 +1,11 @@
 import React,{useState, useEffect} from "react";
 import { View, Text } from "react-native";
-import Homepage from "./Homepage";
 import Login from "./Login";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from "../util/types";
+import NavigationStack from "./NavigationStack";
+import { Snackbar } from "@react-native-material/core";
+
 
 //Stack checks if user is logged in or not and displays correct stack accordingly
 export default function LoginLogoutStack() {
@@ -12,6 +14,7 @@ export default function LoginLogoutStack() {
     const [fetching, setFetching] = useState(true) //For custom display to show everything only after things are loaded/fetched
     const [userData, setUserData] = useState<User>()
     const [token, setToken] = useState<string>('')
+    
 
     //Fetch userdata with token if it exists, at the same time checks if login session has expired
     const fetchUserDataAndLogin = async (token: string) => {
@@ -24,6 +27,7 @@ export default function LoginLogoutStack() {
             setUserData(await result)
             setLoggedIn(true)
             setFetching(false)
+            
         } catch (error) {
             console.log(error)
             setFetching(false)
@@ -46,6 +50,8 @@ export default function LoginLogoutStack() {
         storageFetchUserDetails()
     }, [])
 
+    
+
 
     if (fetching) {
         return(
@@ -56,7 +62,8 @@ export default function LoginLogoutStack() {
     } else {
         return (
             <View style={{flex: 1, justifyContent: "center", alignItems: "center", flexDirection: 'row'}}>
-                {loggedIn ? <Homepage user={userData!} token={token}></Homepage> : <Login fetchUserData={fetchUserDataAndLogin}></Login>}
+                {loggedIn ? <NavigationStack user={userData!} token={token}></NavigationStack> : <Login fetchUserData={fetchUserDataAndLogin}></Login>}
+                
             </View>
         )
     }

@@ -3,14 +3,13 @@ import { Platform, Text, View, StyleSheet } from 'react-native';
 import MapView, { Circle, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { User, LocationType, Spot } from "../util/types";
-
-type HomepageProps = {
-    user: User;
-    token: string
-}
+import { Snackbar } from "@react-native-material/core";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 //Home screen for logged in users
-export default function Homepage(props: HomepageProps) {
+export default function MapScreen({route, navigation}: any) {
+
+    const {user, token} = route.params
 
     const [location, setLocation] = useState<LocationType | any>(null);
     const [errorMsg, setErrorMsg] = useState<any>('waiting');
@@ -21,6 +20,12 @@ export default function Homepage(props: HomepageProps) {
         longitudeDelta: 0.022,
     });
     const [spots, setSpots] = useState<Spot[]>([])
+    const [snackbarVisible, setSnackbarVisible] = useState(false)
+
+    const toggleSnackbar = () => {
+        setSnackbarVisible(true)
+        setTimeout(() => setSnackbarVisible(false), 4000)
+    }
 
     const fetchSpots = async () => {
         try {
@@ -35,7 +40,7 @@ export default function Homepage(props: HomepageProps) {
         }
         
     }
-    
+
     useEffect(() => {
         (async () => {
             let { status } = await Location.requestForegroundPermissionsAsync();
@@ -53,6 +58,7 @@ export default function Homepage(props: HomepageProps) {
                 longitudeDelta: 0.022
             })
             fetchSpots()
+            toggleSnackbar()
         })();
       }, []);
 
@@ -61,8 +67,14 @@ export default function Homepage(props: HomepageProps) {
     } else {
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+                {snackbarVisible &&
+                    <Snackbar
+                        message={'Loged in as ' + user.username}
+                        style={{width: '100%', marginTop: 50}}
+                    />
+                }
                 <MapView
-                    style={{ width: '100%', height: '90%' }}
+                    style={{ width: '100%', height: '100%' }}
                     initialRegion={region}
                     showsUserLocation={true}
                 >
