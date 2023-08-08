@@ -26,10 +26,15 @@ export default function MapScreen({route, navigation}: any) {
     const [newSpotLat, setNewSpotLat] = useState<number>(0)
     const [newSpotLon, setNewSpotLon] = useState<number>(0)
     const [modalVisible, setModalVisible] = useState<boolean>(false)
+    const [snackbarText, setSnackbarText] = useState<string>('')
 
-    const toggleSnackbar = () => {
+    const showSnackbar = (text: string) => {
+        setSnackbarText(text)
         setSnackbarVisible(true)
-        setTimeout(() => setSnackbarVisible(false), 4000)
+        setTimeout(() => {
+            setSnackbarVisible(false)
+            setSnackbarText('')
+        }, 4000)
     }
 
     const resetMarkerPos = () => {
@@ -64,17 +69,19 @@ export default function MapScreen({route, navigation}: any) {
                 latitudeDelta: 0.03,
                 longitudeDelta: 0.022
             })
-            resetMarkerPos()
+            //resetMarkerPos()
             fetchSpots()
-            toggleSnackbar()
+            showSnackbar('Loged in as ' + user.username)
         })();
     }, []);
     
     //First shows marker on map, if marker has been shown and confirmed toggle modal that finished adding sopot
     //(name description for now)
     const addSpot = () => {
-        if (!newSpotMarker) setNewSpotMarker(true)
-        else {
+        if (!newSpotMarker) {
+            resetMarkerPos()
+            setNewSpotMarker(true)
+        }else {
             setNewSpotMarker(false)
             toggleModal()
         }
@@ -98,6 +105,7 @@ export default function MapScreen({route, navigation}: any) {
         toggleModal()
         fetchSpots()
         resetMarkerPos()
+        showSnackbar('Spot added succesfully.')
     }
 
     const cancelAddSpot = () => {
@@ -132,7 +140,7 @@ export default function MapScreen({route, navigation}: any) {
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
                 {snackbarVisible &&
                     <Snackbar
-                        message={'Loged in as ' + user.username}
+                        message={snackbarText}
                         style={{width: '100%', height: 50, marginTop: 50}}
                     />
                 }
