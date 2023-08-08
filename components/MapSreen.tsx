@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Platform, Text, View, StyleSheet } from 'react-native';
-import MapView, { Circle, Marker } from 'react-native-maps';
+import MapView, { Callout, Circle, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
-import { User, LocationType, Spot } from "../util/types";
+import { User, LocationType, Spot, SpotIdList } from "../util/types";
 import { Button, Snackbar } from "@react-native-material/core";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddSpotModal from './AddSpotModal';
+import SpotDetailsModal from './SpotDetailsModal';
 
 //Home screen for logged in users
 export default function MapScreen({route, navigation}: any) {
@@ -25,8 +26,13 @@ export default function MapScreen({route, navigation}: any) {
     const [newSpotMarker, setNewSpotMarker] = useState<boolean>(false)
     const [newSpotLat, setNewSpotLat] = useState<number>(0)
     const [newSpotLon, setNewSpotLon] = useState<number>(0)
-    const [modalVisible, setModalVisible] = useState<boolean>(false)
+    const [spotModalVisible, setSpotModalVisible] = useState<boolean>(false)
     const [snackbarText, setSnackbarText] = useState<string>('')
+    const [spotDetailsModalVisible, setSpotDetailsModalVisible] = useState<boolean>(false)
+    //Active/Selected spot
+    const [spotDetails, setSpotDetails] = useState<Spot>({name: '', id: 0, description: '', likes: 0, dislikes: 0, image: '', lon: 0, lat: 0})
+    const [like, setLike] = useState<boolean>(false)
+    const [dislike, setDislike] = useState<boolean>(false)
 
     const showSnackbar = (text: string) => {
         setSnackbarText(text)
@@ -83,7 +89,7 @@ export default function MapScreen({route, navigation}: any) {
             setNewSpotMarker(true)
         }else {
             setNewSpotMarker(false)
-            toggleModal()
+            toggleSpotModal()
         }
     }
 
@@ -95,14 +101,23 @@ export default function MapScreen({route, navigation}: any) {
         setNewSpotLon(coords.longitude)
     }
 
-    const toggleModal = () => {
-        if (modalVisible) resetMarkerPos()
-        setModalVisible(!modalVisible)
+    //Addig spot modal
+    const toggleSpotModal = () => {
+        if (spotModalVisible) resetMarkerPos()
+        setSpotModalVisible(!spotModalVisible)
+    }
+
+    const toggleSpotDetailsModal = () => {
+        if(spotDetailsModalVisible){
+            setDislike(false)
+            setLike(false)
+        }
+        setSpotDetailsModalVisible(!spotDetailsModalVisible)
     }
 
     //If POST was succesful inside modal
     const spotAdded = () => {
-        toggleModal()
+        toggleSpotModal()
         fetchSpots()
         resetMarkerPos()
         showSnackbar('Spot added succesfully.')
@@ -111,6 +126,20 @@ export default function MapScreen({route, navigation}: any) {
     const cancelAddSpot = () => {
         resetMarkerPos()
         setNewSpotMarker(false)
+    }
+
+    const checkForLikes = (spot: Spot) => {
+        const foundLike = user.likes.find((like: SpotIdList) => like.id === spot.id)
+        if (foundLike !== undefined){
+            setLike(true)
+            setDislike(false)
+            return
+        }
+        const foundDislike = user.dislikes.find((dislike: SpotIdList) => dislike.id === spot.id)
+        if (foundDislike !== undefined){
+            setLike(false)
+            setDislike(true)
+        }
     }
 
     //Prevents overlap of snackbar and buttons because requires 2 different conditionals
@@ -162,10 +191,28 @@ export default function MapScreen({route, navigation}: any) {
                 />
                 }
                 {spots.map((spot, index) => {
-                    return (<Marker key={index} title={spot.name} description={spot.description} coordinate={{latitude: spot.lat, longitude: spot.lon}}></Marker>)
+                    return (
+                        <Marker 
+                            key={index} 
+                            coordinate={{latitude: spot.lat, longitude: spot.lon}}
+                            >
+                                <Callout style={{width: 200, height: 60, justifyContent: 'center'}}>
+                                    <Text>{spot.name}</Text>
+                                    <Text>Likes: {spot.likes}</Text>
+                                    <Button title='Show info' onPress={() => {
+                                        setLike(false)
+                                        setDislike(false)
+                                        setSpotDetails(spot)
+                                        checkForLikes(spot)
+                                        toggleSpotDetailsModal()
+                                    }}></Button>
+                                </Callout>
+                        </Marker>
+                    )
                 })}
                 </MapView>
-                <AddSpotModal visible={modalVisible} toggleModal={toggleModal} spotAdded={spotAdded} lon={newSpotLon} lat={newSpotLat} user={user} token={token}></AddSpotModal>
+                <AddSpotModal visible={spotModalVisible} toggleModal={toggleSpotModal} spotAdded={spotAdded} lon={newSpotLon} lat={newSpotLat} user={user} token={token}></AddSpotModal>
+                <SpotDetailsModal like={like} dislike={dislike} user={user} visible={spotDetailsModalVisible} toggleModal={toggleSpotDetailsModal} spot={spotDetails!}></SpotDetailsModal>
             </View>
         )
     }

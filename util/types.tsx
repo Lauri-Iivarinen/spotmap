@@ -17,7 +17,7 @@ export interface Spot{
     lat: number;
     likes: number;
     dislikes: number;
-    user: User;
+    user?: User;
 }
 
 export interface SpotIdList{

@@ -4,7 +4,7 @@ import { Modal,View, Text } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { User } from "../util/types";
 
-interface ModalProps {
+interface AddSpotModalProps {
     visible: boolean;
     toggleModal: () => void;
     spotAdded: () => void;
@@ -14,7 +14,7 @@ interface ModalProps {
     token: string;
 }
 
-export default function AddSpotModal(props: ModalProps) {
+export default function AddSpotModal(props: AddSpotModalProps) {
 
     const [spotName, setSpotName] = useState<string>('')
     const [spotDescription, setSpotDescription] = useState<string>('')
