@@ -6,19 +6,31 @@ import { Button } from '@react-native-material/core';
 
 export default function UserDetails({route, navigation}: any){
     const {user, token} = route.params
-    const [userData] = useState<User>(user)
-    const [userToken] = useState(token)
+    const [userData, setUserData] = useState<User>(user)
 
-    //spot deletion needs to be implemented in backend
-    const deleteSpot = async (id: number) => {
+    const updateUser = async () => {
         try {
-            const response = await fetch('')
+            const response = await fetch("https://spotmapback-4682c78c99fa.herokuapp.com/api/user", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
             const result = await response.json()
-            console.log(await result)
+            setUserData(result)
         } catch (error) {
             console.log(error)
         }
-        
+    }
+    //Primary key constraints dont allow spots to be deleted yet, needs fixing on backend
+    const deleteSpot = async (id: number) => {
+        try {
+            const response = await fetch(`https://spotmapback-4682c78c99fa.herokuapp.com/api/spots/delete/${id}`, {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            const result = await response.text()
+            console.log(await result)
+            if (await result === 'success') updateUser()
+        } catch (error) {
+            console.log(error)
+        }
     }
 
     return(

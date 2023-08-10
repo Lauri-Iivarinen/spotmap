@@ -11,8 +11,9 @@ import SpotDetailsModal from './SpotDetailsModal';
 //Home screen for logged in users
 export default function MapScreen({route, navigation}: any) {
 
-    const {user, token} = route.params
+    const {token} = route.params
 
+    const [user, setUser] = useState(route.params.user)
     const [location, setLocation] = useState<LocationType | any>(null);
     const [errorMsg, setErrorMsg] = useState<any>('waiting');
     const [region, setRegion] = useState<any>({
@@ -54,6 +55,18 @@ export default function MapScreen({route, navigation}: any) {
             const result = await response.json()
             setSpots(await result)
             setErrorMsg('')
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    const updateUser = async () => {
+        try {
+            const response = await fetch("https://spotmapback-4682c78c99fa.herokuapp.com/api/user", {
+                headers: { Authorization: `Bearer ${token}` }
+            })
+            const result = await response.json()
+            setUser(result)
         } catch (error) {
             console.log(error)
         }
@@ -107,12 +120,16 @@ export default function MapScreen({route, navigation}: any) {
         setSpotModalVisible(!spotModalVisible)
     }
 
-    const toggleSpotDetailsModal = () => {
+    const toggleSpotDetailsModal = (likesChanged: boolean) => {
         if(spotDetailsModalVisible){
             setDislike(false)
             setLike(false)
         }
         setSpotDetailsModalVisible(!spotDetailsModalVisible)
+        if (likesChanged) {
+            updateUser()
+            fetchSpots()
+        }
     }
 
     //If POST was succesful inside modal
@@ -204,7 +221,7 @@ export default function MapScreen({route, navigation}: any) {
                                         setDislike(false)
                                         setSpotDetails(spot)
                                         checkForLikes(spot)
-                                        toggleSpotDetailsModal()
+                                        toggleSpotDetailsModal(false)
                                     }}></Button>
                                 </Callout>
                         </Marker>
@@ -212,7 +229,7 @@ export default function MapScreen({route, navigation}: any) {
                 })}
                 </MapView>
                 <AddSpotModal visible={spotModalVisible} toggleModal={toggleSpotModal} spotAdded={spotAdded} lon={newSpotLon} lat={newSpotLat} user={user} token={token}></AddSpotModal>
-                <SpotDetailsModal like={like} dislike={dislike} user={user} visible={spotDetailsModalVisible} toggleModal={toggleSpotDetailsModal} spot={spotDetails!}></SpotDetailsModal>
+                <SpotDetailsModal token={token} like={like} dislike={dislike} user={user} visible={spotDetailsModalVisible} toggleModal={toggleSpotDetailsModal} spot={spotDetails!}></SpotDetailsModal>
             </View>
         )
     }

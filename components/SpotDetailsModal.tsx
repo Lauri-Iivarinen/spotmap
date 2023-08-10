@@ -6,11 +6,12 @@ import Icon from "react-native-vector-icons/Ionicons";
 
 interface SpotDetailsModalProps {
     visible: boolean;
-    toggleModal: () => void;
+    toggleModal: (likeChanged: boolean) => void;
     spot: Spot;
     user: User;
     like: boolean;
     dislike: boolean;
+    token: string;
 }
 
 //Shows more detailed preview of the spot
@@ -20,15 +21,35 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
     const [spot, setSpot] = useState<Spot>(props.spot)
     const [like, setLike] = useState<boolean>(false)
     const [dislike, setDislike] = useState<boolean>(false)
+    const [likesChanged, setLikesChanged] = useState<boolean>(false)
 
-    const doLike = () => {
-        setLike(!like)
-        if (dislike) setDislike(false)
+    const postLike = async (likeType: string) => {
+        try {
+            const response = await fetch(`https://spotmapback-4682c78c99fa.herokuapp.com/api/spots/${likeType}/${spot.id}`, {
+                headers: { Authorization: `Bearer ${props.token}` },
+                method: 'POST'
+            })
+            const result = await response.json()
+            if (await result.id === spot.id) {
+                console.log('success')
+                setSpot(result)
+                setLikesChanged(true)
+            }
+        } catch (error) {
+            console.log(error)
+        }
     }
 
-    const doDislike = () => {
+    const doLike = async () => {
+        setLike(!like)
+        if (dislike) setDislike(false)
+        postLike('like')
+    }
+
+    const doDislike = async () => {
         setDislike(!dislike)
         if (like) setLike(false)
+       postLike('dislike')
     }
 
     useEffect(() => {
@@ -60,7 +81,7 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
                         </Pressable>
                     </View>
                 </View>
-                <Button style={{marginTop: 50}} title='Close' onPress={() => props.toggleModal()}></Button>
+                <Button style={{marginTop: 50}} title='Close' onPress={() => props.toggleModal(likesChanged)}></Button>
             </View>
         </Modal>
     )
