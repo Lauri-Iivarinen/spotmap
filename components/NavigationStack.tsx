@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import MapScreen from './MapSreen';
 import { User } from '../util/types';
@@ -11,6 +11,7 @@ type MapScreenProps = {
 
 export default function NavigationStack(props: MapScreenProps){
     const Tab = createBottomTabNavigator();
+  
     return (
         <Tab.Navigator initialRouteName='Map'>
           <Tab.Screen name="Map" component={MapScreen} initialParams={{user: props.user, token: props.token}}/>

@@ -18,6 +18,7 @@ export interface Spot{
     likes: number;
     dislikes: number;
     user?: User;
+    comments: Comment[];
 }
 
 export interface SpotIdList{
@@ -32,6 +33,12 @@ interface Coords{
     latitude?: number;
     longitude?: number;
     speed?: number;
+}
+
+interface Comment{
+    comment: string;
+    user: User;
+    spot?: Spot;
 }
 
 export interface LocationType{

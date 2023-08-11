@@ -31,7 +31,7 @@ export default function MapScreen({route, navigation}: any) {
     const [snackbarText, setSnackbarText] = useState<string>('')
     const [spotDetailsModalVisible, setSpotDetailsModalVisible] = useState<boolean>(false)
     //Active/Selected spot
-    const [spotDetails, setSpotDetails] = useState<Spot>({name: '', id: 0, description: '', likes: 0, dislikes: 0, image: '', lon: 0, lat: 0})
+    const [spotDetails, setSpotDetails] = useState<Spot>({name: '', id: 0, description: '', likes: 0, dislikes: 0, image: '', lon: 0, lat: 0, comments: []})
     const [like, setLike] = useState<boolean>(false)
     const [dislike, setDislike] = useState<boolean>(false)
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Modal,Pressable,Text,View } from 'react-native';
+import { FlatList, Modal,Pressable,Text,View } from 'react-native';
 import { Spot, User } from '../util/types';
 import { Button } from '@react-native-material/core';
 import Icon from "react-native-vector-icons/Ionicons";
@@ -80,6 +80,15 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
                             </Text>
                         </Pressable>
                     </View>
+                </View>
+                <View>
+                    <Text>Comments:</Text>
+                    <FlatList
+                        data={spot.comments}
+                        renderItem={({ item }) => <View style={{padding: 3, borderWidth: 1, borderRadius: 10, margin: 2}}>
+                            <Text>{item.user.username}: {item.comment}</Text>
+                        </View>}
+                    ></FlatList>
                 </View>
                 <Button style={{marginTop: 50}} title='Close' onPress={() => props.toggleModal(likesChanged)}></Button>
             </View>
