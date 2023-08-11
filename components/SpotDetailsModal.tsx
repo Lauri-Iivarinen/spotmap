@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { FlatList, Modal,Pressable,Text,View } from 'react-native';
-import { Spot, User } from '../util/types';
-import { Button } from '@react-native-material/core';
+import { Spot, User, Comment } from '../util/types';
+import { Button, TextInput } from '@react-native-material/core';
 import Icon from "react-native-vector-icons/Ionicons";
 
 interface SpotDetailsModalProps {
@@ -22,6 +22,8 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
     const [like, setLike] = useState<boolean>(false)
     const [dislike, setDislike] = useState<boolean>(false)
     const [likesChanged, setLikesChanged] = useState<boolean>(false)
+    const [comment, setComment] = useState<string>('')
+    const [comments, setComments] = useState<Comment[]>([])
 
     const postLike = async (likeType: string) => {
         try {
@@ -31,7 +33,6 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
             })
             const result = await response.json()
             if (await result.id === spot.id) {
-                console.log('success')
                 setSpot(result)
                 setLikesChanged(true)
             }
@@ -56,7 +57,40 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
         setSpot(props.spot)
         setLike(props.like)
         setDislike(props.dislike)
+        setComments(props.spot.comments)
     }, [props.spot, props.like, props.dislike])
+
+    const sendComment = async () => {
+        const body = {
+            "spot": {
+                "id": spot.id
+            },
+            "comment": comment,
+            "user": {
+                "id": props.user.id
+            }
+        }
+        if (comment.trim().length === 0) return//Dont spam empty comments
+
+        try {
+            const response = await fetch('https://spotmapback-4682c78c99fa.herokuapp.com/api/comments', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${props.token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            })
+            const result = await response.text()
+            if (await result === 'idk') {
+                //Response of idk needs to be changed and backend needs implementation for single spot fetch so comment section can be updated
+                setComment('')
+                setLikesChanged(true)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     return(
         <Modal visible={props.visible}>
@@ -81,14 +115,16 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
                         </Pressable>
                     </View>
                 </View>
-                <View>
+                <View style={{backgroundColor: 'rgb(220,220,255)', padding: 2, borderWidth: 1, marginTop: 10}}>
                     <Text>Comments:</Text>
                     <FlatList
-                        data={spot.comments}
-                        renderItem={({ item }) => <View style={{padding: 3, borderWidth: 1, borderRadius: 10, margin: 2}}>
+                        data={comments}
+                        renderItem={({ item }) => <View style={{padding: 3, borderWidth: 1, borderRadius: 10, margin: 2, backgroundColor: 'white'}}>
                             <Text>{item.user.username}: {item.comment}</Text>
                         </View>}
                     ></FlatList>
+                    <TextInput style={{marginTop: 5, padding: 5}} onChangeText={(e) => setComment(e)} value={comment} label='Add comment'></TextInput>
+                    <Button title="Comment" onPress={sendComment}></Button>
                 </View>
                 <Button style={{marginTop: 50}} title='Close' onPress={() => props.toggleModal(likesChanged)}></Button>
             </View>

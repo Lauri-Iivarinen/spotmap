@@ -35,7 +35,7 @@ interface Coords{
     speed?: number;
 }
 
-interface Comment{
+export interface Comment{
     comment: string;
     user: User;
     spot?: Spot;
