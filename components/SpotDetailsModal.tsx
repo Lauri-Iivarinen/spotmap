@@ -41,6 +41,21 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
         }
     }
 
+    const updateSpot = async () => {
+        try {
+            const response = await fetch(`https://spotmapback-4682c78c99fa.herokuapp.com/api/spots/${spot.id}`, {
+                headers: { Authorization: `Bearer ${props.token}` }
+            })
+            const result = await response.json()
+            if (await result.id === spot.id) {
+                setSpot(result)
+                setComments(result.comments)
+            }
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
     const doLike = async () => {
         setLike(!like)
         if (dislike) setDislike(false)
@@ -82,10 +97,10 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
                 body: JSON.stringify(body)
             })
             const result = await response.text()
-            if (await result === 'idk') {
-                //Response of idk needs to be changed and backend needs implementation for single spot fetch so comment section can be updated
+            if (await result === 'success') {
                 setComment('')
                 setLikesChanged(true)
+                updateSpot()
             }
         } catch (error) {
             console.log(error)
