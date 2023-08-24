@@ -97,7 +97,6 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
             })
             const result = await response.text()
             if (await result === 'success') {
-                //Response of idk needs to be changed and backend needs implementation for single spot fetch so comment section can be updated
                 setComment('')
                 setLikesChanged(true)
                 updateSpot()
