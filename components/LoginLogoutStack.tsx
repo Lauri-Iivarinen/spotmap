@@ -4,7 +4,7 @@ import Login from "./Login";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { User } from "../util/types";
 import NavigationStack from "./NavigationStack";
-import { Snackbar } from "@react-native-material/core";
+import { ActivityIndicator, Snackbar } from "@react-native-material/core";
 
 
 //Stack checks if user is logged in or not and displays correct stack accordingly
@@ -56,7 +56,7 @@ export default function LoginLogoutStack() {
     if (fetching) {
         return(
             <View style={{flex: 1, justifyContent: "center", alignItems: "center", flexDirection: 'row'}}>
-                <Text>Fetching...</Text>
+                <ActivityIndicator size="large" />
             </View>
         )
     } else {

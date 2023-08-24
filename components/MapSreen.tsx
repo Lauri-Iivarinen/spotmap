@@ -3,7 +3,7 @@ import { Platform, Text, View, StyleSheet } from 'react-native';
 import MapView, { Callout, Circle, Marker } from 'react-native-maps';
 import * as Location from 'expo-location';
 import { User, LocationType, Spot, SpotIdList } from "../util/types";
-import { Button, Snackbar } from "@react-native-material/core";
+import { ActivityIndicator, Button, Snackbar } from "@react-native-material/core";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import AddSpotModal from './AddSpotModal';
 import SpotDetailsModal from './SpotDetailsModal';
@@ -180,7 +180,7 @@ export default function MapScreen({route, navigation}: any) {
         </View>
 
     if (errorMsg.length > 0) {
-        return (<View><Text>{errorMsg}</Text></View>)
+        return (<View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}><ActivityIndicator size="large" /></View>)
     } else {
         return (
             <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>

@@ -1,8 +1,9 @@
 import React, { useEffect, useState } from 'react';
-import { FlatList, Modal,Pressable,Text,View } from 'react-native';
+import { FlatList, KeyboardAvoidingView, Modal,Pressable,Text,View } from 'react-native';
 import { Spot, User, Comment } from '../util/types';
 import { Button, TextInput } from '@react-native-material/core';
 import Icon from "react-native-vector-icons/Ionicons";
+import { ScrollView } from 'react-native';
 
 interface SpotDetailsModalProps {
     visible: boolean;
@@ -24,6 +25,19 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
     const [likesChanged, setLikesChanged] = useState<boolean>(false)
     const [comment, setComment] = useState<string>('')
     const [comments, setComments] = useState<Comment[]>([])
+
+    const updateSpot = async () => {
+        try {
+            const response = await fetch(`https://spotmapback-4682c78c99fa.herokuapp.com/api/spots/${spot.id}`, {
+                headers: { Authorization: `Bearer ${props.token}` }
+            })
+            const result = await response.json()
+            setSpot(result)
+            setComments(result.comments)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
     const postLike = async (likeType: string) => {
         try {
@@ -82,15 +96,22 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
                 body: JSON.stringify(body)
             })
             const result = await response.text()
-            if (await result === 'idk') {
+            if (await result === 'success') {
                 //Response of idk needs to be changed and backend needs implementation for single spot fetch so comment section can be updated
                 setComment('')
                 setLikesChanged(true)
+                updateSpot()
             }
         } catch (error) {
             console.log(error)
         }
     }
+
+
+    const commentHeader = <Text>Comments:</Text>
+
+    const commentFooter = <View><TextInput style={{marginTop: 5, padding: 5}} onChangeText={(e) => setComment(e)} value={comment} label='Add comment'></TextInput>
+    <Button title="Comment" onPress={sendComment}></Button></View>
 
     return(
         <Modal visible={props.visible}>
@@ -115,16 +136,20 @@ export default function SpotDetailsModal(props: SpotDetailsModalProps){
                         </Pressable>
                     </View>
                 </View>
-                <View style={{backgroundColor: 'rgb(220,220,255)', padding: 2, borderWidth: 1, marginTop: 10}}>
-                    <Text>Comments:</Text>
+                <View style={{backgroundColor: 'rgb(220,220,255)', padding: 2, borderWidth: 1, marginTop: 10, paddingBottom: 20, height: '70%'}}>
+                    
                     <FlatList
                         data={comments}
+                        scrollEnabled={true}
+                        ListHeaderComponent={commentHeader}
+                        ListFooterComponent={commentFooter}
+                        automaticallyAdjustKeyboardInsets={true}
                         renderItem={({ item }) => <View style={{padding: 3, borderWidth: 1, borderRadius: 10, margin: 2, backgroundColor: 'white'}}>
                             <Text>{item.user.username}: {item.comment}</Text>
                         </View>}
+                        
                     ></FlatList>
-                    <TextInput style={{marginTop: 5, padding: 5}} onChangeText={(e) => setComment(e)} value={comment} label='Add comment'></TextInput>
-                    <Button title="Comment" onPress={sendComment}></Button>
+                    
                 </View>
                 <Button style={{marginTop: 50}} title='Close' onPress={() => props.toggleModal(likesChanged)}></Button>
             </View>
