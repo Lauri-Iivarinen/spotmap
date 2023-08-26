@@ -6,7 +6,7 @@ import { NavigationContainer } from '@react-navigation/native';
 
 export default function App() {
   return (
-    <SafeAreaView style={{flex: 1, justifyContent: "center", alignItems: "center"}}>
+    <SafeAreaView style={{ flex: 1, justifyContent: "center", alignItems: "center" }}>
       <NavigationContainer>
           <LoginLogoutStack></LoginLogoutStack>
       </NavigationContainer>
