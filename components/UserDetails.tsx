@@ -34,7 +34,7 @@ export default function UserDetails({route, navigation}: any){
     }
 
     return(
-        <SafeAreaView style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+        <SafeAreaView style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
             <Text>User: {userData.username}</Text>
             <Button title="Refesh" onPress={updateUser}></Button>
             <Text style={{marginTop: 10}}>Spots:</Text>

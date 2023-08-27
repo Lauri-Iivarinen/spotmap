@@ -15,6 +15,9 @@ export default function LoginLogoutStack() {
     const [userData, setUserData] = useState<User>()
     const [token, setToken] = useState<string>('')
     
+    const logout = () => {
+        setLoggedIn(false)
+    }
 
     //Fetch userdata with token if it exists, at the same time checks if login session has expired
     const fetchUserDataAndLogin = async (token: string) => {
@@ -62,7 +65,7 @@ export default function LoginLogoutStack() {
     } else {
         return (
             <View style={{flex: 1, justifyContent: "center", alignItems: "center", flexDirection: 'row'}}>
-                {loggedIn ? <NavigationStack user={userData!} token={token}></NavigationStack> : <Login fetchUserData={fetchUserDataAndLogin}></Login>}
+                {loggedIn ? <NavigationStack user={userData!} token={token} logout={logout}></NavigationStack> : <Login fetchUserData={fetchUserDataAndLogin}></Login>}
                 
             </View>
         )

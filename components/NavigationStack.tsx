@@ -6,20 +6,31 @@ import UserDetails from './UserDetails';
 import Icon from "react-native-vector-icons/Ionicons";
 import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { View } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import { Header, Text } from '@rneui/themed';
 
 type MapScreenProps = {
   user: User;
-  token: string
+  token: string;
+  logout: () => void;
 }
 
 export default function NavigationStack(props: MapScreenProps){
     const Tab = createBottomTabNavigator();
   
-  
-  const header = <View><Icon name="flame"></Icon></View>
-  
   return (
     <SafeAreaProvider>
+       <Header
+        ViewComponent={LinearGradient} // Don't forget this!
+        linearGradientProps={{
+          colors: ['white', 'rgb(180,180,250)'],
+          start: { x: 0, y: 1 },
+          end: { x: 0, y: 0 },
+        }}
+        leftComponent={<View style={{flexDirection: 'row', alignItems: 'center'}}><Icon name="person"></Icon><Text style={{marginLeft: 5}}>{ props.user.username}</Text></View>}
+        centerComponent={<View></View>}
+        rightComponent={<Icon name="log-out" size={24} onPress={props.logout}></Icon>}
+      />
         <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color }) => {
@@ -36,6 +47,7 @@ export default function NavigationStack(props: MapScreenProps){
           },
           tabBarActiveTintColor: 'tomato',
           tabBarInactiveTintColor: 'gray',
+          headerShown: false,
         })}
         initialRouteName='Map'>
           <Tab.Screen
@@ -51,7 +63,7 @@ export default function NavigationStack(props: MapScreenProps){
           component={UserDetails}
           initialParams={{
             user: props.user,
-            token: props.token
+            token: props.token,
           }}
         />
         </Tab.Navigator>
