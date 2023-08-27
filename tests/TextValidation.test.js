@@ -24,11 +24,11 @@ test('First character is returned in uppercase', () => {
 })
 
 test('Validate password, too short', () => {
-    expect(validatePassword('passwrd')).toBe(false)
+    expect(validatePassword('Pa5wrd!')).toBe(false)
 })
 
 test('Validate password, too long', () => {
-    expect(validatePassword('passwordpasswordpasswordpasswordpasswordpasswor')).toBe(false)
+    expect(validatePassword('Passw0rd!passwordpasswordpasswordpasswordpasswor')).toBe(false)
 })
 
 test('Validate password, no capital letter', () => {
