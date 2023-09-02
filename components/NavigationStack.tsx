@@ -38,12 +38,12 @@ export default function NavigationStack(props: MapScreenProps){
 
             if (route.name === 'Map') {
               iconName = 'map'
-            } else if (route.name === 'User') {
+            } else if (route.name === 'My spots') {
               iconName = 'person'
             } else {
               iconName = 'help'
             }
-            return <Icon name={iconName} color={color}/>;
+            return <Icon name={iconName} color={color} size={20}/>;
           },
           tabBarActiveTintColor: 'tomato',
           tabBarInactiveTintColor: 'gray',
@@ -59,7 +59,7 @@ export default function NavigationStack(props: MapScreenProps){
             }}
             />
         <Tab.Screen
-          name="User"
+          name="My spots"
           component={UserDetails}
           initialParams={{
             user: props.user,
