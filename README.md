@@ -28,6 +28,13 @@ Users can:
 - Dislike pins
 - Comment pins
 
+### Future improvements
+ - Add spots to favorites
+ - Filter spots
+ - My spots page overhaul
+ - Notifications when own spot receives like/comment
+ - Login page visual overhaul 2.0
+
 ## Screenshots
 <img src="https://github.com/Lauri-Iivarinen/spotmap/assets/94760484/81321e7a-3f89-4f05-8d13-0ec8112958ac" width=200 />
 <img src="https://github.com/Lauri-Iivarinen/spotmap/assets/94760484/d099cba8-74b7-4511-832d-3cb13d7a9057" width=200 />
